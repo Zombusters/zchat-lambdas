@@ -1,2 +1,2 @@
-zappa
+-r requirements.txt
 ipython
