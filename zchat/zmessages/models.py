@@ -1,3 +1,4 @@
+from django.contrib.postgres.fields import JSONField
 from django.db import models
 from django.contrib.auth.models import User
 
@@ -5,4 +6,4 @@ from django.contrib.auth.models import User
 class Message(models.Model):
     author = models.ForeignKey(User, null=True)
     timestamp = models.DateTimeField(auto_now_add=True)
-    text = models.TextField()
+    msg = JSONField()

@@ -18,7 +18,7 @@ from django.contrib import admin
 from django.contrib.auth.models import User
 from rest_framework import routers, serializers, viewsets
 from rest_framework_jwt.views import verify_jwt_token, refresh_jwt_token, obtain_jwt_token
-from zmessages.serializers import MessageViewSet
+from zmessages.serializers import MessageViewSet, MyMessageViewSet
 
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
@@ -26,13 +26,15 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
         model = User
         fields = ('url', 'first_name', 'last_name', 'username', 'email', 'is_staff')
 
+
 class UserViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
 router = routers.DefaultRouter()
 router.register(r'users', UserViewSet)
-router.register(r'messages', MessageViewSet)
+router.register(r'messages', MessageViewSet, base_name='messages')
+router.register(r'my-messages', MyMessageViewSet, base_name='my-messages')
 
 
 urlpatterns = [
