@@ -7,3 +7,9 @@ class Message(models.Model):
     author = models.ForeignKey(User, null=True)
     timestamp = models.DateTimeField(auto_now_add=True)
     msg = JSONField()
+
+
+class MobilePushToken(models.Model):
+    user = models.ForeignKey(User, null=True)
+    timestamp = models.DateTimeField(auto_now_add=True)
+    token = models.TextField()
