@@ -23,7 +23,7 @@ class MyMessageSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Message
-        fields = ('author', 'msg', 'timestamp')
+        fields = ('msg', 'timestamp')
 
 
 class MessageViewSet(viewsets.ReadOnlyModelViewSet):
@@ -32,7 +32,7 @@ class MessageViewSet(viewsets.ReadOnlyModelViewSet):
     # permission_classes = (permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly,)
 
 
-class MyMessageViewSet(viewsets.ReadOnlyModelViewSet):
+class MyMessageViewSet(viewsets.ModelViewSet):
     queryset = Message.objects.all()
     serializer_class = MyMessageSerializer
     # permission_classes = (permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly,)
