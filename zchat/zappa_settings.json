@@ -1,0 +1,7 @@
+{
+    "zchat_base": {
+        "django_settings": "zchat.settings",
+        "profile_name": "pss_zombie",
+        "s3_bucket": "zappa-zchat-base"
+    }
+}
