@@ -1,21 +1,35 @@
 containers:
   django:
     setup:
-    - !Alpine v3.5
+    - !Ubuntu trusty
     - !Install
-      - postgresql-dev  # needed to build psycopg2 python package
+      - libpq-dev  # needed to build psycopg2 python package
     - !PipConfig
       dependencies: true
-    - !Py3Requirements requirements_dev.txt
+    - !Py2Requirements requirements_dev.txt
+    - !Py2Install
+      - pip
+    environ-file: /work/.env.aws
+    environ:
+      VIRTUAL_ENV: ZAPPA_HACK
+    volumes:
+      /tmp: !Tmpfs
+        size: 500M
+        mode: 0o700
 
 commands:
   run: !Command
     description: Start the django development server
     container: django
-    run: python3 manage.py runserver
+    run: python2 manage.py runserver
   manage.py: !Command
     description: Shortcut to manage.py
     container: django
     run:
-    - python3
+    - python2
     - manage.py
+  zappa: !Command
+    description: Shortcut zappa
+    container: django
+    run:
+    - zappa
