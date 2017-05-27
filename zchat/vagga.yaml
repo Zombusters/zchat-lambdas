@@ -1,0 +1,19 @@
+containers:
+  django:
+    setup:
+    - !Alpine v3.5
+    - !PipConfig
+      dependencies: true
+    - !Py3Requirements requirements_dev.txt
+
+commands:
+  run: !Command
+    description: Start the django development server
+    container: django
+    run: python3 manage.py runserver
+  manage.py: !Command
+    description: Shortcut to manage.py
+    container: django
+    run:
+    - python3
+    - manage.py
