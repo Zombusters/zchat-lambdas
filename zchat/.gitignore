@@ -1,1 +1,3 @@
 .vagga
+.aws.credentials
+.env.aws
