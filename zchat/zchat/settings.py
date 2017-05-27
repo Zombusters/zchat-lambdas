@@ -10,21 +10,26 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/1.11/ref/settings/
 """
 
-import os
 
+import environ
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+BASE_DIR = environ.Path(__file__) - 2  # three folder back (/a/b/c/ - 3 = /)
+env = environ.Env(
+    DEBUG=(bool, False),
+)  # set default values and casting
+environ.Env.read_env()  # reading .env file
 
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.11/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '+vrz&53ip_90+&l_jgtc%=t-zp31g-^)ycd$n-_9b55fvg8wlo'
+SECRET_KEY = env('SECRET_KEY',
+                 default='+vrz&53ip_90+&l_jgtc%=t-zp31g-^)ycd$n-_9b55fvg8wlo')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = env('DEBUG')
 
 ALLOWED_HOSTS = ['*']
 
@@ -61,6 +66,7 @@ TEMPLATES = [
         'DIRS': [],
         'APP_DIRS': True,
         'OPTIONS': {
+            'debug': DEBUG,
             'context_processors': [
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
@@ -77,21 +83,22 @@ WSGI_APPLICATION = 'zchat.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/1.11/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-#     }
-# }
+# Convert RDS env vars into normal DATABASE_URL if available
+_db_uri = 'psql://{username}:{password}@{hostname}:{port}/{db}'.format(
+    db=env('RDS_DB_NAME', default=''),
+    username=env('RDS_DB_USERNAME', default=''),
+    password=env('RDS_DB_PASSWORD', default=''),
+    hostname=env('RDS_DB_HOSTNAME', default=''),
+    port=env('RDS_DB_PORT', default='')
+)
+
+if 'DATABASE_URL' not in env.ENVIRON and _db_uri != 'psql://:@:/':
+    env.ENVIRON['DATABASE_URL'] = _db_uri
+
+del _db_uri
+
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': os.environ.get('RDS_DB_NAME', ''),
-        'USER': os.environ.get('RDS_USERNAME', ''),
-        'PASSWORD': os.environ.get('RDS_PASSWORD', ''),
-        'HOST': os.environ.get('RDS_HOSTNAME', ''),
-        'PORT': os.environ.get('RDS_PORT', ''),
-    }
+    'default': env.db(),  # Raises ImproperlyConfigured exception if DATABASE_URL not in os.environ
 }
 
 
@@ -131,8 +138,8 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
 
-AWS_ACCESS_KEY_ID = os.environ.get('DJ_AWS_ACCESS_KEY_ID')
-AWS_SECRET_ACCESS_KEY = os.environ.get('DJ_AWS_SECRET_ACCESS_KEY')
+AWS_ACCESS_KEY_ID = env('DJ_AWS_ACCESS_KEY_ID')
+AWS_SECRET_ACCESS_KEY = env('DJ_AWS_SECRET_ACCESS_KEY')
 
 AWS_STORAGE_BUCKET_NAME = 'zappa-zchat-static'
 STATICFILES_LOCATION = 'static'
