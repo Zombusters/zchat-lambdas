@@ -86,10 +86,10 @@ WSGI_APPLICATION = 'zchat.wsgi.application'
 # Convert RDS env vars into normal DATABASE_URL if available
 _db_uri = 'psql://{username}:{password}@{hostname}:{port}/{db}'.format(
     db=env('RDS_DB_NAME', default=''),
-    username=env('RDS_DB_USERNAME', default=''),
-    password=env('RDS_DB_PASSWORD', default=''),
-    hostname=env('RDS_DB_HOSTNAME', default=''),
-    port=env('RDS_DB_PORT', default='')
+    username=env('RDS_USERNAME', default=''),
+    password=env('RDS_PASSWORD', default=''),
+    hostname=env('RDS_HOSTNAME', default=''),
+    port=env('RDS_PORT', default='')
 )
 
 if 'DATABASE_URL' not in env.ENVIRON and _db_uri != 'psql://:@:/':
