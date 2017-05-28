@@ -3,7 +3,7 @@ import uuid
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import User
 
-from rest_framework import serializers, viewsets, status, permissions
+from rest_framework import serializers, viewsets, status, permissions, authentication
 from rest_framework.generics import CreateAPIView
 from rest_framework.response import Response
 
@@ -98,6 +98,7 @@ class AddUserView(CreateAPIView):
     queryset = User.objects.all()
     serializer_class = NewUserSerializer
     permission_classes = (permissions.AllowAny,)
+    authentication_classes = (authentication.BasicAuthentication,)
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
