@@ -1,3 +1,5 @@
+import uuid
+
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import User
 
@@ -65,15 +67,16 @@ class MessageViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 class MyMessageViewSet(viewsets.ModelViewSet):
-    queryset = Message.objects.all()
     serializer_class = MyMessageSerializer
     # permission_classes = (permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly,)
 
     def perform_create(self, serializer):
-        serializer.save(author=self.request.user)
+        msg = serializer.validated_data['msg']
+        msg['uuid'] = str(uuid.uuid4())
+        serializer.save(author=self.request.user, msg=msg)
 
     def get_queryset(self):
-        queryset = Message.objects.all().filter(author=self.request.user.id)
+        queryset = Message.objects.all().filter(author_id=self.request.user.id)
         return queryset
 
 
