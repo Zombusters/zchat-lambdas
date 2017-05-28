@@ -13,3 +13,11 @@ class MobilePushToken(models.Model):
     user = models.ForeignKey(User, null=True)
     timestamp = models.DateTimeField(auto_now_add=True)
     token = models.TextField()
+
+
+class Room(models.Model):
+    creator = models.ForeignKey(User, null=True)
+    timestamp = models.DateTimeField(auto_now_add=True)
+    name = models.TextField()
+    is_private = models.BooleanField(default=False)
+    meta = JSONField()
