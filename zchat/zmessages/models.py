@@ -18,6 +18,6 @@ class MobilePushToken(models.Model):
 class Room(models.Model):
     creator = models.ForeignKey(User, null=True)
     timestamp = models.DateTimeField(auto_now_add=True)
-    name = models.TextField()
+    name = models.CharField(max_length=64)
     is_private = models.BooleanField(default=False)
     meta = JSONField()
