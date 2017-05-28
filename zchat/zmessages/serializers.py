@@ -6,7 +6,7 @@ from rest_framework.generics import CreateAPIView
 from rest_framework.response import Response
 
 from zchat.permissions import IsOwnerOrReadOnly
-from zmessages.models import Message, MobilePushToken
+from zmessages.models import Message, MobilePushToken, Room
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -49,6 +49,13 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = User
         fields = ('url', 'first_name', 'last_name', 'username', 'email', 'is_staff')
+
+
+class RoomSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = Room
+        fields = '__all__'
+        extra_kwargs = {'creator': {'read_only': True}}
 
 
 class MessageViewSet(viewsets.ReadOnlyModelViewSet):
@@ -104,3 +111,11 @@ class AddUserView(CreateAPIView):
 class UserViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
+
+
+class RoomViewSet(viewsets.ModelViewSet):
+    queryset = Room.objects.all()
+    serializer_class = RoomSerializer
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
